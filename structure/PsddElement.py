@@ -2,6 +2,9 @@ from structure.PsddNode import PsddNode
 import random
 
 class PsddElement(object):
+    """AND gate.
+    In this implementation, we assume every AND gate is the child of one PSDD decision nodes (OR gate).
+    In another words, they are not shared between different PSDD decision nodes."""
 
     def __init__(self, prime: PsddNode, sub: PsddNode):
         self._prime = prime
