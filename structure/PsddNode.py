@@ -51,6 +51,7 @@ class PsddNode(object):
 
 
 class PsddDecision(PsddNode):
+    """OR gate."""
 
     def __init__(self, vtree, index, elements: list):
         super().__init__(vtree, index)
@@ -97,6 +98,7 @@ LITERAL_IS_FALSE = 0
 
 
 class PsddTerminal(PsddNode):
+    """Terminal(leaf) node."""
 
     def __init__(self, vtree, index, var_index, var_value):
         super().__init__(vtree, index)
