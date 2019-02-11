@@ -1,4 +1,4 @@
-from algo.LogisticPsdd import LogisticPsdd
+from algo.LogisticCircuit import LogisticCircuit
 from structure.Vtree import Vtree
 from util.mnist_data import read_data_sets
 import argparse
@@ -11,7 +11,7 @@ def main():
     vtree = Vtree.read(FLAGS.vtree)
 
     # create a logistic psdd
-    psdd = LogisticPsdd(vtree)
+    psdd = LogisticCircuit(vtree)
 
     best_accuracy = float('-inf')
     for i in range(FLAGS.num_structure_learning_iterations):

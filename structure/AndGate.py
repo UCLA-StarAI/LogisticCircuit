@@ -1,12 +1,15 @@
-from structure.PsddNode import PsddNode
+from structure.CircuitNode import CircuitNode
 import random
 
-class PsddElement(object):
-    """AND gate.
+class AndGate(object):
+    """
+    And Gate.
+    We also refer AND Gates as Elements.
     In this implementation, we assume every AND gate is the child of one PSDD decision nodes (OR gate).
-    In another words, they are not shared between different PSDD decision nodes."""
+    In another words, they are not shared between different PSDD decision nodes.
+    """
 
-    def __init__(self, prime: PsddNode, sub: PsddNode):
+    def __init__(self, prime: CircuitNode, sub: CircuitNode):
         self._prime = prime
         self._sub = sub
         self._prime.increase_num_parents_by_one()

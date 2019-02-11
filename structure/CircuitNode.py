@@ -2,7 +2,7 @@ from structure.Vtree import Vtree
 import numpy as np
 import random
 
-class PsddNode(object):
+class CircuitNode(object):
 
     def __init__(self, vtree: Vtree, index):
         self._vtree = vtree
@@ -50,7 +50,7 @@ class PsddNode(object):
         self._prob = value
 
 
-class PsddDecision(PsddNode):
+class OrGate(CircuitNode):
     """OR gate."""
 
     def __init__(self, vtree, index, elements: list):
@@ -97,7 +97,7 @@ LITERAL_IS_TRUE = 1
 LITERAL_IS_FALSE = 0
 
 
-class PsddTerminal(PsddNode):
+class CircuitTerminal(CircuitNode):
     """Terminal(leaf) node."""
 
     def __init__(self, vtree, index, var_index, var_value):
