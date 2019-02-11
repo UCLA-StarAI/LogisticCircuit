@@ -51,7 +51,10 @@ class CircuitNode(object):
 
 
 class OrGate(CircuitNode):
-    """OR gate."""
+    """
+       OR gate.
+       Or gates are also referred as Decision nodes.
+       """
 
     def __init__(self, vtree, index, elements: list):
         super().__init__(vtree, index)
