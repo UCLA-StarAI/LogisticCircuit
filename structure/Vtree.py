@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class Vtree(ABC):
 
     @property

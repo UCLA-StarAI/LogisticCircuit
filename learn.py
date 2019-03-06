@@ -5,6 +5,7 @@ import argparse
 
 FLAGS = None
 
+
 def main():
     # read dataset and vtree
     data = read_data_sets(FLAGS.data_path, FLAGS.positive_label, FLAGS.percentage)

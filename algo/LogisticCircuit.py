@@ -7,6 +7,7 @@ from algo.LogisticRegression import LogisticRegression
 import random
 import copy
 
+
 class LogisticCircuit(object):
 
     def __init__(self, vtree: Vtree):
@@ -309,7 +310,6 @@ class LogisticCircuit(object):
         """Predict the given images."""
         y = 1.0 / (1.0 + np.exp(-(features * self._parameters).sum(axis=1)))
         return y
-
 
     def learn_parameters(self, data, num_iterations):
         """Logistic Psdd's parameter learning is reduced to logistic regression.

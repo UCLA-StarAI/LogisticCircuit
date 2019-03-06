@@ -2,6 +2,7 @@ from structure.Vtree import Vtree
 import numpy as np
 import random
 
+
 class CircuitNode(object):
 
     def __init__(self, vtree: Vtree, index):
@@ -32,7 +33,7 @@ class CircuitNode(object):
 
     def decrease_num_parents_by_one(self):
         self._num_parents -= 1
-        
+
     @property
     def feature(self):
         return self._feature
@@ -141,4 +142,3 @@ class CircuitTerminal(CircuitNode):
         else:
             raise ValueError('Terminal nodes should either be positive literals or negative literals.')
         self._feature = np.zeros(shape=self._prob.shape, dtype=np.float32)
-

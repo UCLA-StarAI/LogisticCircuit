@@ -1,6 +1,7 @@
 from structure.CircuitNode import CircuitNode
 import random
 
+
 class AndGate(object):
     """
     And Gate.
@@ -33,7 +34,7 @@ class AndGate(object):
         self._prime = value
         if self._prime is not None:
             self._prime.increase_num_parents_by_one()
-    
+
     @property
     def sub(self):
         return self._sub

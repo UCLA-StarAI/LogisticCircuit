@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class DataSet(object):
 
     def __init__(self, images, labels, positive_images, negative_images):

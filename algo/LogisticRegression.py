@@ -23,8 +23,7 @@ from sklearn.preprocessing import LabelEncoder, LabelBinarizer
 from sklearn.svm.base import _fit_liblinear
 from sklearn.utils import check_array, check_consistent_length, compute_class_weight
 from sklearn.utils import check_random_state
-from sklearn.utils.extmath import (log_logistic, safe_sparse_dot, softmax,
-                             squared_norm)
+from sklearn.utils.extmath import (log_logistic, safe_sparse_dot, softmax, squared_norm)
 from sklearn.utils.extmath import row_norms
 from sklearn.utils.fixes import logsumexp
 from sklearn.utils.optimize import newton_cg
@@ -32,7 +31,6 @@ from sklearn.utils.validation import check_X_y
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.multiclass import check_classification_targets
 from sklearn.externals.joblib import Parallel, delayed
-from sklearn.model_selection import check_cv
 from sklearn.externals import six
 from sklearn.metrics import SCORERS
 
@@ -1171,7 +1169,7 @@ class LogisticRegression(BaseEstimator, LinearClassifierMixin,
         self.multi_class = multi_class
         self.verbose = verbose
         self.warm_start = warm_start
-        self.coef_=coef_
+        self.coef_ = coef_
         self.n_jobs = n_jobs
 
     def fit(self, X, y, sample_weight=None):
