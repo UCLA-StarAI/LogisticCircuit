@@ -25,14 +25,15 @@ def main():
     data.train.features = circuit.calculate_features(data.train.images)
     data.valid.features = circuit.calculate_features(data.valid.images)
     data.test.features = circuit.calculate_features(data.test.images)
+    valid_accuracy = circuit.calculate_accuracy(data.valid)
     print(f'Its performance is as follows. '
           f'Training accuracy: {circuit.calculate_accuracy(data.train):.5f}\t'
-          f'Valid accuracy: {circuit.calculate_accuracy(data.valid):.5f}\t'
+          f'Valid accuracy: {valid_accuracy:.5f}\t'
           f'Test accuracy: {circuit.calculate_accuracy(data.test):.5f}')
 
     print('Start structure learning.')
 
-    best_accuracy = 0.0
+    best_accuracy = valid_accuracy
     for i in range(FLAGS.num_structure_learning_iterations):
         cur_time = time.time()
 
@@ -44,17 +45,15 @@ def main():
 
         circuit.learn_parameters(data.train, FLAGS.num_parameter_learning_iterations)
 
-        train_accuracy = circuit.calculate_accuracy(data.train)
         valid_accuracy = circuit.calculate_accuracy(data.valid)
-        test_accuracy = circuit.calculate_accuracy(data.test)
-        print(f'Training accuracy: {train_accuracy:.5f}\t'
+        print(f'Training accuracy: {circuit.calculate_accuracy(data.train):.5f}\t'
               f'Valid accuracy: {valid_accuracy:.5f}\t'
-              f'Test accuracy: {test_accuracy:.5f}')
+              f'Test accuracy: {circuit.calculate_accuracy(data.test):.5f}')
         print(f'Num parameters: {circuit.num_parameters}\tTime spent: {(time.time() - cur_time):.2f}')
 
         if FLAGS.save_path != '' and (valid_accuracy >= best_accuracy):
             print('Obtained a logistic circuit with higher classification accuracy. Start saving.')
-            best_accuracy = test_accuracy
+            best_accuracy = valid_accuracy
             with open(FLAGS.save_path, 'w') as circuit_file:
                 circuit.save(circuit_file)
             print('Logistic circuit saved.')
