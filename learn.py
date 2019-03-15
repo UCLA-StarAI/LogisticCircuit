@@ -51,7 +51,7 @@ def main():
               f'Test accuracy: {circuit.calculate_accuracy(data.test):.5f}')
         print(f'Num parameters: {circuit.num_parameters}\tTime spent: {(time.time() - cur_time):.2f}')
 
-        if FLAGS.save_path != '' and (valid_accuracy >= best_accuracy):
+        if FLAGS.save_path != '' and (valid_accuracy > best_accuracy):
             print('Obtained a logistic circuit with higher classification accuracy. Start saving.')
             best_accuracy = valid_accuracy
             with open(FLAGS.save_path, 'w') as circuit_file:
