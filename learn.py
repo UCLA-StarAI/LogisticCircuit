@@ -18,11 +18,13 @@ def main():
         with open(FLAGS.circuit, 'r') as circuit_file:
             circuit = LogisticCircuit(vtree, FLAGS.num_classes, circuit_file=circuit_file)
             print('The saved circuit is successfully loaded.')
+            data.train.features = circuit.calculate_features(data.train.images)
     else:
         circuit = LogisticCircuit(vtree, FLAGS.num_classes)
+        data.train.features = circuit.calculate_features(data.train.images)
+        circuit.learn_parameters(data.train, 50)
 
     print(f'The starting circuit has {circuit.num_parameters} parameters.')
-    data.train.features = circuit.calculate_features(data.train.images)
     data.valid.features = circuit.calculate_features(data.valid.images)
     data.test.features = circuit.calculate_features(data.test.images)
     valid_accuracy = circuit.calculate_accuracy(data.valid)
@@ -52,8 +54,8 @@ def main():
         print(f'Num parameters: {circuit.num_parameters}\tTime spent: {(time.time() - cur_time):.2f}')
 
         if FLAGS.save_path != '' and (valid_accuracy > best_accuracy):
-            print('Obtained a logistic circuit with higher classification accuracy. Start saving.')
             best_accuracy = valid_accuracy
+            print('Obtained a logistic circuit with higher classification accuracy. Start saving.')
             with open(FLAGS.save_path, 'w') as circuit_file:
                 circuit.save(circuit_file)
             print('Logistic circuit saved.')
@@ -77,7 +79,7 @@ if __name__ == '__main__':
                         help='[Optional] Num of iterations for structure learning. Its default value is 5000.')
     parser.add_argument('--num_parameter_learning_iterations', type=int,
                         default=15,
-                        help='[Optional] Number of iterations for parameter learning after the structure is changed. '
+                        help='[Optional] Number of iterations for parameter learning after the structure is changed.'
                              'Its default value is 15.')
     parser.add_argument('--depth', type=int,
                         default=2,
