@@ -3,19 +3,14 @@ import numpy as np
 
 class DataSet(object):
 
-    def __init__(self, images, labels, positive_images, negative_images):
+    def __init__(self, images, labels):
         self._images = images
         self._labels = labels
-        self._positive_images = positive_images
-        self._negative_images = negative_images
-        self._num_positive_images = positive_images.shape[0]
-        self._num_negative_images = negative_images.shape[0]
-        self._index_in_positive_images = 0
-        self._index_in_negative_images = 0
-        self._num_positive_epochs = 0
-        self._num_negative_epochs = 0
-        self._positive_image_features = None
-        self._negative_image_features = None
+        self._one_hot_labels = to_one_hot_encoding(labels)
+        self._features = None
+        self._num_samples = self._images.shape[0]
+        self._num_epochs = 0
+        self._index = 0
 
     @property
     def images(self):
@@ -26,96 +21,68 @@ class DataSet(object):
         return self._labels
 
     @property
-    def positive_images(self):
-        return self._positive_images
+    def one_hot_labels(self):
+        return self._one_hot_labels
 
     @property
-    def negative_images(self):
-        return self._negative_images
+    def features(self):
+        return self._features
+
+    @features.setter
+    def features(self, value):
+        self._features = value
 
     @property
-    def positive_image_features(self):
-        return self._positive_image_features
-
-    @positive_image_features.setter
-    def positive_image_features(self, value):
-        self._positive_image_features = value
-
-    @property
-    def negative_image_features(self):
-        return self._negative_image_features
-
-    @negative_image_features.setter
-    def negative_image_features(self, value):
-        self._negative_image_features = value
+    def num_samples(self):
+        return self._num_samples
 
     @property
     def num_epochs(self):
-        return max(self._num_positive_epochs, self._num_negative_epochs)
+        return self._num_epochs
 
     def next_batch(self, batch_size):
         """Return the next `batch_size` examples, features and labels from this data set."""
-        batch_size //= 2
-        start_positive_images = self._index_in_positive_images
-        self._index_in_positive_images += batch_size
-        if self._index_in_positive_images > self._num_positive_images:
-            # Shuffle the data
-            perm = np.arange(self._num_positive_images)
+        assert batch_size <= self._num_samples
+
+        if self._index + batch_size >= self._num_samples:
+            perm = np.arange(self._num_samples)
             np.random.shuffle(perm)
-            self._positive_images = self._positive_images[perm]
-            self._positive_image_features = self._positive_image_features[perm]
-            # Start next epoch
-            start_positive_images = 0
-            self._index_in_positive_images = batch_size
-            assert batch_size <= self._num_positive_images
-            self._num_positive_epochs += 1
-        end_positive_images = self._index_in_positive_images
+            self._images = self._images[perm]
+            self._labels = self._labels[perm]
+            self._features = self._features[perm]
+            self._index = 0
+            self._num_epochs += 1
 
-        start_negative_images = self._index_in_negative_images
-        self._index_in_negative_images += batch_size
-        if self._index_in_negative_images > self._num_negative_images:
-            # Shuffle the data
-            perm = np.arange(self._num_negative_images)
-            np.random.shuffle(perm)
-            self._negative_images = self._negative_images[perm]
-            self._negative_image_features = self._negative_image_features[perm]
-            # Start next epoch
-            start_negative_images = 0
-            self._index_in_negative_images = batch_size
-            assert batch_size <= self._num_negative_images
-            self._num_negative_epochs += 1
-        end_negative_images = self._index_in_negative_images
-
-        images = np.vstack((self._positive_images[start_positive_images: end_positive_images],
-                            self._negative_images[start_negative_images: end_negative_images]))
-        features = np.vstack((self._positive_image_features[start_positive_images: end_positive_images],
-                              self._negative_image_features[start_negative_images: end_negative_images]))
-        labels = np.vstack((np.ones(shape=(batch_size, 1), dtype=np.float32),
-                            np.zeros(shape=(batch_size, 1), dtype=np.float32)))
-        return images, features, labels
-
-    def balanced_all(self):
-        positive_multiplier = int(max(self._num_negative_images/self._num_positive_images, 1.0))
-        negative_multiplier = int(max(self._num_positive_images/self._num_negative_images, 1.0))
-        images = np.vstack((np.vstack([self._positive_images for _ in range(positive_multiplier)]),
-                            np.vstack([self._negative_images for _ in range(negative_multiplier)])))
-        features = np.vstack((np.vstack([self._positive_image_features for _ in range(positive_multiplier)]),
-                              np.vstack([self._negative_image_features for _ in range(negative_multiplier)])))
-        labels = np.vstack((np.ones(shape=(self._num_positive_images * positive_multiplier, 1), dtype=np.float32),
-                            np.zeros(shape=(self._num_negative_images * negative_multiplier, 1), dtype=np.float32)))
-        return images, features, labels
+        images = self._images[self._index: self._index + batch_size]
+        labels = self._labels[self._index: self._index + batch_size]
+        features = self._features[self._index: self._index + batch_size]
+        self._index += batch_size
+        return images, features, labels, to_one_hot_encoding(labels)
 
 
 class DataSets(object):
 
-    def __init__(self, train, test):
+    def __init__(self, train, valid, test):
         self._train = train
         self._test = test
+        self._valid = valid
 
     @property
     def train(self):
         return self._train
 
     @property
+    def valid(self):
+        return self._valid
+
+    @property
     def test(self):
         return self._test
+
+
+def to_one_hot_encoding(labels):
+    num_classes = np.max(labels) + 1
+    one_hot_labels = np.zeros(shape=(len(labels), num_classes), dtype=np.float32)
+    for i in range(len(labels)):
+        one_hot_labels[i][labels[i]] = 1.0
+    return one_hot_labels

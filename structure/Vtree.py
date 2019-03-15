@@ -3,6 +3,13 @@ from abc import ABC, abstractmethod
 
 class Vtree(ABC):
 
+    def __init__(self, index):
+        self._index = index
+
+    @property
+    def index(self):
+        return self._index
+
     @property
     def var_count(self):
         return self._var_count
@@ -23,13 +30,14 @@ class Vtree(ABC):
             nodes = [None] * num_nodes
             root = None
             for line in vtree_file.readlines():
-                cells = line.strip().split(' ')
-                if cells[0] == 'L':
-                    root = VtreeLeaf(int(cells[2]))
-                    nodes[int(cells[1])] = root
-                elif cells[0] == 'I':
-                    root = VtreeIntermediate(nodes[int(cells[2])], nodes[int(cells[3])])
-                    nodes[int(cells[1])] = root
+                line_as_list = line.strip().split(' ')
+                if line_as_list[0] == 'L':
+                    root = VtreeLeaf(int(line_as_list[1]), int(line_as_list[2]))
+                    nodes[int(line_as_list[1])] = root
+                elif line_as_list[0] == 'I':
+                    root = VtreeIntermediate(int(line_as_list[1]),
+                                             nodes[int(line_as_list[2])], nodes[int(line_as_list[3])])
+                    nodes[int(line_as_list[1])] = root
                 else:
                     raise ValueError('Vtree node could only be L or I')
             return root
@@ -37,7 +45,8 @@ class Vtree(ABC):
 
 class VtreeLeaf(Vtree):
 
-    def __init__(self, variable):
+    def __init__(self, index, variable):
+        super(VtreeLeaf, self).__init__(index)
         self._var = variable
         self._var_count = 1
 
@@ -55,7 +64,8 @@ class VtreeLeaf(Vtree):
 
 class VtreeIntermediate(Vtree):
 
-    def __init__(self, left, right):
+    def __init__(self, index, left, right):
+        super(VtreeIntermediate, self).__init__(index)
         self._left = left
         self._right = right
         self._variables = set()

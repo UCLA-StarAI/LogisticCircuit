@@ -1,13 +1,11 @@
-from structure.Vtree import Vtree
 import numpy as np
-import random
 
 
 class CircuitNode(object):
 
-    def __init__(self, vtree: Vtree, index):
-        self._vtree = vtree
+    def __init__(self, index, vtree):
         self._index = index
+        self._vtree = vtree
         self._splittable_variables = None
         self._num_parents = 0
         # difference between prob and feature:
@@ -17,12 +15,12 @@ class CircuitNode(object):
         self._feature = None
 
     @property
-    def vtree(self):
-        return self._vtree
-
-    @property
     def index(self):
         return self._index
+
+    @property
+    def vtree(self):
+        return self._vtree
 
     @property
     def num_parents(self):
@@ -52,13 +50,11 @@ class CircuitNode(object):
 
 
 class OrGate(CircuitNode):
-    """
-       OR gate.
-       Or gates are also referred as Decision nodes.
-       """
+    """OR Gate.
+       Or gates are also referred as Decision nodes."""
 
-    def __init__(self, vtree, index, elements: list):
-        super().__init__(vtree, index)
+    def __init__(self, index, vtree, elements):
+        super().__init__(index, vtree)
         self._elements = elements
         for element in elements:
             element.parent = self
@@ -94,9 +90,16 @@ class OrGate(CircuitNode):
             element.prime.feature += element.feature
             element.sub.feature += element.feature
 
+    def save(self, f):
+        f.write(f'D {self._index} {self._vtree.index} {len(self._elements)}')
+        for element in self._elements:
+            f.write(f' ({element.prime.index} {element.sub.index}')
+            for parameter in element.parameter:
+                f.write(f' {parameter}')
+            f.write(f')')
+        f.write('\n')
 
-LITERAL_UNSATISFIABLE = -1
-LITERAL_ALWAYS_SATISFIED = 2
+
 LITERAL_IS_TRUE = 1
 LITERAL_IS_FALSE = 0
 
@@ -104,11 +107,11 @@ LITERAL_IS_FALSE = 0
 class CircuitTerminal(CircuitNode):
     """Terminal(leaf) node."""
 
-    def __init__(self, vtree, index, var_index, var_value):
-        super().__init__(vtree, index)
+    def __init__(self, index, vtree, var_index, var_value, parameters=None):
+        super().__init__(index, vtree)
         self._var_index = var_index
         self._var_value = var_value
-        self._parameter = random.random() - 0.5
+        self._parameter = parameters
 
     @property
     def var_index(self):
@@ -142,3 +145,14 @@ class CircuitTerminal(CircuitNode):
         else:
             raise ValueError('Terminal nodes should either be positive literals or negative literals.')
         self._feature = np.zeros(shape=self._prob.shape, dtype=np.float32)
+
+    def save(self, f):
+        if self._var_value == LITERAL_IS_TRUE:
+            f.write(f'T {self._index} {self._vtree.index} {self._var_index}')
+        elif self._var_value == LITERAL_IS_FALSE:
+            f.write(f'F {self._index} {self._vtree.index} {self._var_index}')
+        else:
+            raise ValueError('Currently we only support terminal nodes that are either positive or negative literals.')
+        for parameter in self._parameter:
+            f.write(f' {parameter}')
+        f.write('\n')

@@ -1,5 +1,4 @@
 from structure.CircuitNode import CircuitNode
-import random
 
 
 class AndGate(object):
@@ -10,7 +9,7 @@ class AndGate(object):
     In another words, they are not shared between different PSDD decision nodes.
     """
 
-    def __init__(self, prime: CircuitNode, sub: CircuitNode):
+    def __init__(self, prime: CircuitNode, sub: CircuitNode, parameter=None):
         self._prime = prime
         self._sub = sub
         self._prime.increase_num_parents_by_one()
@@ -20,7 +19,7 @@ class AndGate(object):
         # feature is calculated in a top-down pass using probs; equals the WMC of that element reached
         self._feature = None
         self._prob = None
-        self._parameter = random.random() - 0.5
+        self._parameter = parameter
         self._parent = None
         self._splittable_variables = set()
         self._flag = False
