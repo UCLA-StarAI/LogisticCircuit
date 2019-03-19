@@ -6,7 +6,6 @@ class CircuitNode(object):
     def __init__(self, index, vtree):
         self._index = index
         self._vtree = vtree
-        self._splittable_variables = None
         self._num_parents = 0
         # difference between prob and feature:
         # prob is calculated in a bottom-up pass and only considers values of variables the node has
