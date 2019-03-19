@@ -75,11 +75,11 @@ class OrGate(CircuitNode):
         for element in self._elements:
             element.calculate_prob()
         self._prob = np.sum([np.exp(element.prob) for element in self._elements], axis=0)
-        self._prob[np.where(self._prob < 1e-7)[0]] = 1e-7
+        self._prob = np.where(self._prob < 1e-7, 1e-7, self._prob)
         self._prob = np.log(self._prob)
         for element in self._elements:
             element.prob -= self._prob
-        self._prob[np.where(self._prob > 0.0)[0]] = 0.0
+        self._prob = np.where(self._prob > 0.0, 0.0, self._prob)
         self._feature = np.zeros(shape=self._prob.shape, dtype=np.float32)
 
     def calculate_feature(self):
