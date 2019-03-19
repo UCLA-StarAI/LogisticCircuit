@@ -106,11 +106,11 @@ LITERAL_IS_FALSE = 0
 class CircuitTerminal(CircuitNode):
     """Terminal(leaf) node."""
 
-    def __init__(self, index, vtree, var_index, var_value, parameters=None):
+    def __init__(self, index, vtree, var_index, var_value, parameter=None):
         super().__init__(index, vtree)
         self._var_index = var_index
         self._var_value = var_value
-        self._parameter = parameters
+        self._parameter = parameter
 
     @property
     def var_index(self):
