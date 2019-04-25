@@ -91,7 +91,7 @@ if __name__ == '__main__':
     parser.add_argument('--percentage', type=float,
                         default=1.0,
                         help='[Optional] The percentage of the training dataset that will be used. '
-                             'Its default value is 100%.')
+                             'Its default value is 100%%.')
     parser.add_argument('--save_path', type=str,
                         default='',
                         help='[Optional] File path to save the best-performing circuit.')
