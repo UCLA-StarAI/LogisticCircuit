@@ -368,7 +368,7 @@ class LogisticCircuit(object):
         """Logistic Psdd's parameter learning is reduced to logistic regression.
         We use mini-batch SGD to optimize the parameters."""
         model = LogisticRegression(solver='saga', fit_intercept=False, multi_class='ovr',
-                                   max_iter=num_iterations, C=10.0, warm_start=True, tol=1e-5,
+                                   max_iter=num_iterations, C=0.1, warm_start=True, tol=1e-5,
                                    coef_=self._parameters, n_jobs=num_cores)
         model.fit(data.features, data.labels)
         self._record_learned_parameters(model.coef_)
