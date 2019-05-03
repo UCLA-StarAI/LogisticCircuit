@@ -2,6 +2,8 @@
 
 This repo contains the code to run experiments reported in the paper "Learning Logistic Circuits", published in AAAI 2019.
 
+This implementation has one subtle difference with the desciprtion in the paper: the weight of a leaf node. In the paper, we define the weight of a leaf as 0, whereas here we define it as the leaf node's parameter. In terms of representation power, the two definitions are equivalent. One can just add an OR gate on top of every original leaf node. Effectively, the original leaf nodes' parameters are pushed up to the wires between the new OR gates and the leaf nodes. By doing so, the leaf nodes' weights are cast to 0.
+
 We kindly include a help function in learn.py. In other words, to query what arguments are required and the detailed description what each argument is for, please execute "python3 learn.py --help" in your terminal.
 
 Note the default balanced.vtree is for MNIST and Fashion-MNIST. To run experiments on other datasets, a different vtree is necessary. As requested by some users, we include a small script (generate_balanced_vtree.py) in "util/" to generate balanced vtrees. The generated vtrees from this script are not optimized, and thus do not guarantee optimal performance.
