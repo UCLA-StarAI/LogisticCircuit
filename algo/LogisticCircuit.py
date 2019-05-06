@@ -31,7 +31,7 @@ c
 
 class LogisticCircuit(object):
 
-    def __init__(self, vtree, num_classes,  circuit_file=None):
+    def __init__(self, vtree, num_classes, circuit_file=None):
         self._vtree = vtree
         self._num_classes = num_classes
         self._largest_index = 0
