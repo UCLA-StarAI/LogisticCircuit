@@ -155,7 +155,7 @@ class LogisticCircuit(object):
 
     def _record_learned_parameters(self, parameters):
         self._parameters = copy.deepcopy(parameters)
-        self.bias = self._parameters[:, 0]
+        self._bias = self._parameters[:, 0]
         for i in range(len(self._terminal_nodes)):
             self._terminal_nodes[i].parameter = self._parameters[:, i + 1]
         for i in range(len(self._elements)):
