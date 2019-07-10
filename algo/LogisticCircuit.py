@@ -33,7 +33,7 @@ class LogisticCircuit(object):
     def __init__(self, vtree, num_classes, circuit_file=None):
         self._vtree = vtree
         self._num_classes = num_classes
-        self._largest_index = 0
+        self._largest_index = -1
         self._num_variables = vtree.var_count
 
         self._terminal_nodes = [None] * 2 * self._num_variables
@@ -65,6 +65,7 @@ class LogisticCircuit(object):
     def _generate_all_terminal_nodes(self, vtree: Vtree):
         if vtree.is_leaf():
             var_index = vtree.var
+            self._largest_index += 1
             self._terminal_nodes[var_index - 1] = CircuitTerminal(
                 self._largest_index, vtree, var_index, LITERAL_IS_TRUE, np.random.random_sample(size=(self._num_classes,))
             )
@@ -72,7 +73,6 @@ class LogisticCircuit(object):
             self._terminal_nodes[self._num_variables + var_index - 1] = CircuitTerminal(
                 self._largest_index, vtree, var_index, LITERAL_IS_FALSE, np.random.random_sample(size=(self._num_classes,))
             )
-            self._largest_index += 1
         else:
             self._generate_all_terminal_nodes(vtree.left)
             self._generate_all_terminal_nodes(vtree.right)
@@ -155,8 +155,8 @@ class LogisticCircuit(object):
                 )
             )
             elements[0].splittable_variables = copy.deepcopy(vtree.variables)
-        root = OrGate(self._largest_index, vtree, elements)
         self._largest_index += 1
+        root = OrGate(self._largest_index, vtree, elements)
         return root
 
     def _serialize(self):
@@ -376,9 +376,8 @@ class LogisticCircuit(object):
             copied_elements = []
             for element in node.elements:
                 copied_elements.append(self._deep_copy_element(element, variable, current_depth + 1, max_depth))
-            copied_node = OrGate(self._largest_index, node.vtree, copied_elements)
             self._largest_index += 1
-            return copied_node
+            return OrGate(self._largest_index, node.vtree, copied_elements)
 
     def _deep_copy_element(self, element, variable, current_depth, max_depth):
         if current_depth >= max_depth:
