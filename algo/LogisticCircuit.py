@@ -376,8 +376,9 @@ class LogisticCircuit(object):
             copied_elements = []
             for element in node.elements:
                 copied_elements.append(self._deep_copy_element(element, variable, current_depth + 1, max_depth))
+            copied_node = OrGate(self._largest_index, node.vtree, copied_elements)
             self._largest_index += 1
-            return OrGate(self._largest_index, node.vtree, copied_elements)
+            return copied_node
 
     def _deep_copy_element(self, element, variable, current_depth, max_depth):
         if current_depth >= max_depth:
